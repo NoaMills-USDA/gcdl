@@ -131,7 +131,7 @@ def get_request_metadata(req):
 
 def assume_crs(dsc, datasets, input_crs_str):
     """
-    Determines what CRS to use for user geomtry if not specified
+    Determines what CRS to use for user geometry if not specified
     in an uploaded file.
     """
     if input_crs_str is not None:

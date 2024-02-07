@@ -110,6 +110,8 @@ class PRISM(GSDataSet):
         # Open data file
         data = rioxarray.open_rasterio(fpath, masked=True)
 
+        print("CRS CHECK: PRISM's file's crs = {}".format(data.rio.crs))
+
         if subset_geom is not None and not(self.crs.equals(subset_geom.crs)):
             raise ValueError(
                 'Subset geometry CRS does not match dataset CRS.'

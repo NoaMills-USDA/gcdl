@@ -296,6 +296,7 @@ async def subset_polygon(
         # Assume the user geometry CRS from request info
         # in case not provided with uploaded geometry
         assumed_crs = assume_crs(dsc, datasets, crs)
+        print("CRS CHECK: assume_crs() returned {}".format(assumed_crs.to_epsg()))
 
         if clip != '':
             clip_geom = SubsetPolygon(clip, assumed_crs)
@@ -306,8 +307,11 @@ async def subset_polygon(
                 'One of clip or geom_guid needs to be provided.'
             )
 
+        print("CRS CHECK: clip_geom is of crs {}".format(clip_geom.crs.to_epsg()))
+
         # Set the target CRS, if applicable
         target_crs = get_target_crs(crs, resolution, clip_geom)
+        print("CRS CHECK: get_target_crs() returned {}".format(target_crs.to_epsg() if target_crs is not None else None))
 
         request = DataRequest(
             dsc, datasets, dates, years, months, days, hours, grain_method, 
