@@ -95,7 +95,7 @@ class DataRequestHandler:
         self, dataset, varname, grain, rdate, rhour, subset_geom, request,
         target_data = None
     ):
-        
+        print("CRS CHECK: _getRasterLayer() received a subset_geom of crs {} for variable {}".format(subset_geom.crs.to_epsg(), varname))    
         # Determine if variable is categorical or continuous
         if varname in dataset.categorical_vars:
             ri_method = request.ri_method['categorical']
@@ -127,11 +127,13 @@ class DataRequestHandler:
                         resampling=Resampling[ri_method],
                         resolution=request.target_resolution
                     )
+                    print("CRS CHECK: reprojected data to {}".format(data.rio.crs))
                 else:
                     data = data.rio.reproject_match(
                         match_data_array=target_data,
                         resampling=Resampling[ri_method]
                     )
+                    print("CRS CHECK: reproject_matched data to {}".format(data.rio.crs))
                 temp_geom = request.subset_geom
             # If raster reprojection is not needed, then reproject subset_geom
             # to match the crs of the data
@@ -152,6 +154,7 @@ class DataRequestHandler:
                 time_dim = xr.DataArray(date_series, [('time',date_series)])
                 data = data.expand_dims(time=time_dim)
 
+            print("CRS CHECK: _getRasterLayer() returning data of crs {} for variable {}".format(data.rio.crs, varname))
             return data
         else:
             return None
@@ -164,7 +167,11 @@ class DataRequestHandler:
         these geometries to avoid redundant reprojections when processing 
         the data retrievals.
         """
-
+        print(
+            "CRS CHECK: _buildDatasetSubsetGeoms() received a subset_geom with crs {} for datasets {}".format(
+            subset_geom.crs.to_epsg(), 
+            dsvars)
+        )
         # If raster-type request, buffer subset geometry
         if request_type == dr.REQ_RASTER:
             # Unit of requested SubsetGeom
@@ -187,6 +194,7 @@ class DataRequestHandler:
                 ds_subset_geoms[dsid] = rsg.reproject(
                     dsc[dsid].crs
                 )
+            print("CRS CHECK: created dataset-specific subset_geom of crs {} for variable {}".format(ds_subset_geoms[dsid].crs.to_epsg(), dsid))
 
         return ds_subset_geoms
 
@@ -203,6 +211,7 @@ class DataRequestHandler:
         self, request, dsid, grain, date_list, geom,
         target_data
     ):
+        print("CRS CHECK: _collectRasterData() received a geom of crs {} for variable {}".format(geom.crs.to_epsg(), dsid))
         # Collect requested data in a xarray.Dataset for this requested dataset
         ds_output_data = xr.Dataset()
         for varname in request.dsvars[dsid]:
