@@ -145,20 +145,21 @@ def assume_crs(dsc, datasets, input_crs_str):
 
 def get_target_crs(input_crs_str, resolution, user_geom):
     """
-    Determines the target CRS 
+    Determines the target CRS
     """
 
     # If crs parameter provided, use that. Else,
     # use the CRS of the user geometry, which is
-    # the uploaded geometry CRS or that of the 
-    # first dataset, that was decided above 
+    # the uploaded geometry CRS or that of the
+    # first dataset, that was decided above
     # in the clip geometry.
     if input_crs_str is not None:
         target_crs = CRS(input_crs_str)
-    else:
+    elif input_crs_str is None and resolution is not None:
         target_crs = user_geom.geom.crs
+    else:
+        target_crs = None
 
     return target_crs
-
 
 
