@@ -111,9 +111,10 @@ class DataRequestHandler:
         data = dataset.getData(
             varname, grain, req_date, ri_method, subset_geom
         )
-
-        print("CRS CHECK: getData() returned data of crs {}".format(data.rio.crs))
-
+        if data is not None:
+            print("CRS CHECK: getData() returned data of crs {}".format(data.rio.crs))
+        else:
+            print("CRS CHECK: getData() returned None")
         if data is not None:
             # Reproject to the target resolution, target projection, or both, if
             # needed.
@@ -153,8 +154,10 @@ class DataRequestHandler:
                 date_series = pd.Series(date_str)
                 time_dim = xr.DataArray(date_series, [('time',date_series)])
                 data = data.expand_dims(time=time_dim)
-
-            print("CRS CHECK: _getRasterLayer() returning data of crs {} for variable {}".format(data.rio.crs, varname))
+            if data is not None:
+                print("CRS CHECK: _getRasterLayer() returning data of crs {} for variable {}".format(data.rio.crs, varname))
+            else:
+                print("CRS CHECK: _getRasterLayer() returning None")
             return data
         else:
             return None
