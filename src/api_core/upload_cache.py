@@ -223,7 +223,7 @@ class DataUploadCache:
 
         # Load CRS information, if provided.
         prj_path = zipfile.Path(zf, at=sf_base + '.prj')
-        if prj_path.exists() and not(dbf_path.is_dir()):
+        if prj_path.exists() and not(prj_path.is_dir()):
             with prj_path.open(mode='r') as fin:
                 crs = CRS.from_string(fin.read())
 
